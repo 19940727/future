@@ -3,6 +3,7 @@ import type {RouteObject} from "react-router-dom";
 
 import {
     DashboardOutlined,
+    SettingOutlined,
     UserOutlined,
 } from '@ant-design/icons';
 
@@ -13,6 +14,7 @@ import LayoutWrapper from "../components/layout/layout";
 import Login from "../login";
 
 export declare type RouteConfig = RouteObject & {
+    isMenu?: boolean;
     key?: React.Key;
     label?: React.ReactNode;
     icon?: React.ReactNode;
@@ -24,14 +26,28 @@ let routes: RouteConfig[] = [
     {
         path: "/",
         element: <LayoutWrapper/>,
+        isMenu: true,
         children: [
-            {index: true, element: <Dashboard/>, key: "/", label: "控制台", icon: <DashboardOutlined/>},
             {
-                path: "/system/user",
+                index: true,
+                element: <Dashboard/>,
+                key: "/",
+                label: "控制台",
+                icon: <DashboardOutlined/>
+            },
+            {
+                path: "/system",
                 element: <User/>,
-                icon: <UserOutlined/>,
-                label: "用户列表",
-                key: "/system/user",
+                icon: <SettingOutlined/>,
+                label: "系统管理",
+                children: [
+                    {
+                        path: "/system/user",
+                        element: <User/>,
+                        icon: <UserOutlined/>,
+                        label: "用户管理",
+                    },
+                ]
             },
         ],
     },

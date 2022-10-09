@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {Layout, Menu, MenuProps} from "antd";
-import { MenuInfo } from 'rc-menu/es/interface';
+import {MenuInfo} from 'rc-menu/es/interface';
 import routes, {RouteConfig} from "../../router/router";
 import {useNavigate} from "react-router-dom";
 
@@ -22,29 +22,38 @@ function getItem(
     } as MenuItem;
 }
 
-function menuEach(menus: MenuItem[], routes: RouteConfig[]): MenuItem[] {
-    if (menus == null) {
-        menus = [];
-    }
+
+function menuEach(routes: RouteConfig[]): MenuItem[] {
+    let menus: MenuItem[] = [];
+
     routes.forEach((route) => {
-        console.log(route)
+
         if (route.children) {
-            let children = menuEach(menus, route.children);
-            menus.concat(children);
+            let child = menuEach(route.children);
+            let parent = getItem(route.label, route.path, route.icon, child);
+            menus.push(parent);
         } else {
             if (route.label) {
-                menus.push(getItem(route.label, route.key, route.icon));
+                menus.push(getItem(route.label, route.path, route.icon));
             }
         }
     });
     return menus;
 }
 
+
 const Sidebar = () => {
     const [collapsed, setCollapsed] = useState(false);
     const navigate = useNavigate();
 
-    let menus = menuEach([], routes);
+    let menusConfig = routes.filter((route) => {
+        return route.isMenu;
+    })
+
+    let menus: MenuItem[] = [];
+    menusConfig.forEach((config) => {
+        menus.concat(...menuEach(config.children || []));
+    })
 
     const handleClick = (e: MenuInfo) => {
         navigate(e.key);
