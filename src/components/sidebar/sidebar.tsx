@@ -30,11 +30,11 @@ function menuEach(routes: RouteConfig[]): MenuItem[] {
 
         if (route.children) {
             let child = menuEach(route.children);
-            let parent = getItem(route.label, route.path, route.icon, child);
+            let parent = getItem(route.label, route.path || route.key, route.icon, child);
             menus.push(parent);
         } else {
             if (route.label) {
-                menus.push(getItem(route.label, route.path, route.icon));
+                menus.push(getItem(route.label, route.path || route.key, route.icon));
             }
         }
     });
@@ -52,7 +52,7 @@ const Sidebar = () => {
 
     let menus: MenuItem[] = [];
     menusConfig.forEach((config) => {
-        menus.concat(...menuEach(config.children || []));
+        menus = menus.concat(...menuEach(config.children || []));
     })
 
     const handleClick = (e: MenuInfo) => {
